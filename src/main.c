@@ -923,6 +923,7 @@ static gchar *option_nodevice = NULL;
 static gchar *option_noplugin = NULL;
 static gchar *option_wifi = NULL;
 static gboolean option_detach = TRUE;
+static gboolean option_perror = TRUE;
 static gboolean option_dnsproxy = TRUE;
 static gboolean option_backtrace = TRUE;
 static gboolean option_version = FALSE;
@@ -982,6 +983,9 @@ static GOptionEntry options[] = {
 	{ "nodaemon", 'n', G_OPTION_FLAG_REVERSE,
 				G_OPTION_ARG_NONE, &option_detach,
 				"Don't fork daemon to background" },
+	{ "noperror", 'N', G_OPTION_FLAG_REVERSE,
+				G_OPTION_ARG_NONE, &option_perror,
+				"Don't log to stederr when !daemon" },
 	{ "nodnsproxy", 'r', G_OPTION_FLAG_REVERSE,
 				G_OPTION_ARG_NONE, &option_dnsproxy,
 				"Don't support DNS resolving" },
@@ -1192,7 +1196,7 @@ int main(int argc, char *argv[])
 
 	g_dbus_set_disconnect_function(conn, disconnect_callback, NULL, NULL);
 
-	__connman_log_init(argv[0], option_debug, option_detach,
+	__connman_log_init(argv[0], option_debug, option_detach || !option_perror,
 			option_backtrace, "Connection Manager", VERSION);
 
 	__connman_dbus_init(conn);
